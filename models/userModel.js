@@ -19,6 +19,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    totalMarks: {
+      type: Number,
+      default: null,
+    },
     assignment: [
       {
         type: mongoose.Schema.Types.ObjectId,
