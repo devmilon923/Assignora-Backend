@@ -12,12 +12,14 @@ const {
   getMyAssignmentById,
   searchAssignment,
   searchAssignmentDeffi,
+  topUser,
 } = require("../controllers/assignment");
 const { authUser } = require("../middlewares/authUser");
 const route = express.Router();
 
 route.post("/create", authUser, createAssignment); // Create assignment
 route.get("/get", getAssignment); // Get all assignment
+route.get("/top-user", topUser); // Get all assignment
 route.get("/get/:id", getAssignmentById); // Get one assignment by :id
 route.get("/get/my/:id", authUser, getMyAssignmentById); // Get one assignment by :id
 route.get("/get/status/pending", getPendingAssignment); // Get all pending assignment

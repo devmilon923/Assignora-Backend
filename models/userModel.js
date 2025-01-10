@@ -21,7 +21,8 @@ const userSchema = mongoose.Schema(
     },
     totalMarks: {
       type: Number,
-      default: null,
+      default: 0,
+      required: true,
     },
     assignment: [
       {

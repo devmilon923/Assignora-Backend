@@ -39,7 +39,7 @@ const getAssignment = async (req, res) => {
       dateline: { $lt: new Date() },
     });
 
-    return res.status(201).send({ success: true, data: result });
+    return res.status(200).send({ success: true, data: result });
   } catch (error) {
     console.log(error);
     return res
@@ -160,11 +160,15 @@ const submitMarks = async (req, res) => {
       message: "Mark distribution already completed",
     });
   try {
+    await User.findByIdAndUpdate(data.user_id, {
+      $inc: { totalMarks: parseInt(req.body.givenMarks) },
+    });
+
     data.givenMarks = req.body.givenMarks;
     data.feedback = req.body.feedback;
     data.status = true;
     data.save();
-    return res.status(201).send({ success: true, message: "Marks submited" });
+    return res.status(200).send({ success: true, message: "Marks submited" });
   } catch (error) {
     return res.status(400).send({ success: false, message: error.message });
   }
@@ -191,6 +195,18 @@ const searchAssignmentDeffi = async (req, res) => {
     return res.status(400).send({ success: false, message: error.message });
   }
 };
+const topUser = async (req, res) => {
+  try {
+    const topUser = await User.find({})
+      .select("name totalMarks photo")
+      .sort({ totalMarks: -1 })
+      .limit(10);
+    return res.status(200).send({ success: true, data: topUser });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).send({ success: false, message: error.message });
+  }
+};
 module.exports = {
   createAssignment,
   getAssignment,
@@ -204,4 +220,5 @@ module.exports = {
   getMyAssignmentById,
   searchAssignment,
   searchAssignmentDeffi,
+  topUser,
 };

@@ -8,7 +8,7 @@ const DBConnect = require("./services/DBConnect");
 const app = express();
 app.use(
   cors({
-    origin: process.env.App_URL,
+    origin: [process.env.App_URL, "http://localhost:5173"],
     credentials: true,
   })
 );

@@ -36,10 +36,10 @@ const addUser = async (req, res) => {
         .send({ success: true, message: "Login success", data: user });
     }
     const user = await User.create(req.body);
-    return res.status(201).send({ success: true, data: user });
+    return res.status(200).send({ success: true, data: user });
   } catch (error) {
     console.log(error);
-    return res.status(404).send({ success: true, message: error });
+    return res.status(404).send({ success: false, message: error });
   }
 };
 
