@@ -42,5 +42,45 @@ const addUser = async (req, res) => {
     return res.status(404).send({ success: false, message: error });
   }
 };
+const updateUserInfo = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.userInfo._id, req.body);
+    const token = await setJwt(req.body);
+    if (!token)
+      return res
+        .status(401)
+        .send({ success: false, message: "Cookie not set" });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.Environment === "PD" ? true : false,
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days in milliseconds
+      sameSite: "None",
+    });
 
-module.exports = { setcookie, logout, test, addUser };
+    res.status(200);
+    return res.send({ success: true, message: "Profile updated" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400);
+    return res.send({ success: false, message: error.message });
+  }
+};
+const myProfile = async (req, res) => {
+  try {
+    const result = await User.findById(req.userInfo._id);
+    res.status(200);
+    return res.send({ success: true, data: result });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400);
+    return res.send({ success: false, message: error.message });
+  }
+};
+module.exports = {
+  setcookie,
+  logout,
+  test,
+  addUser,
+  updateUserInfo,
+  myProfile,
+};
