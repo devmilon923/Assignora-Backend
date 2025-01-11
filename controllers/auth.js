@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const nodemailer = require("nodemailer");
 const { setJwt } = require("../services/checkUser");
 const setcookie = async (req, res) => {
   const token = await setJwt(req.body);
@@ -76,6 +77,49 @@ const myProfile = async (req, res) => {
     return res.send({ success: false, message: error.message });
   }
 };
+
+const contactEmail = async (req, res) => {
+  const transport = nodemailer.createTransport({
+    secure: true,
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "milonizehere@gmail.com",
+      pass: process.env.App_Password,
+    },
+  });
+
+  const sendEmail = async (email, message, name) => {
+    try {
+      await transport.sendMail({
+        to: "dev.milon923@gmail.com",
+        subject: "Client Message Form Assignora",
+        html: `
+          <p>Name: ${name}</p>
+          <p>Email: ${email}</p>
+          <p>Message: <b>${message}</b></p>
+        `,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Error sending email:", error.message);
+      return { success: false, message: error.message };
+    }
+  };
+
+  try {
+    const result = await sendEmail(
+      req.body.email,
+      req.body.message,
+      req.body.name
+    );
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(400).send({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   setcookie,
   logout,
@@ -83,4 +127,5 @@ module.exports = {
   addUser,
   updateUserInfo,
   myProfile,
+  contactEmail,
 };
